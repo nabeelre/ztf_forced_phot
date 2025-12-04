@@ -278,7 +278,7 @@ def get_baseline(fps_file, window="14D",
             elif "reqid" in fps_file:
                 # Batch FP output files are identified with their request ID integers
                 # This extracts the request ID integer from the file name if it contains "reqid"
-                ztf_name = re.search(r'/(\d+)\.txt$', fps_file).group(1)
+                ztf_name = re.search(r'reqid(\d+)\.txt$', fps_file).group(1)
                 print("Request ID: {}".format(ztf_name))
             else:
                 raise AssertionError("Unable to decode object name from file path: {}".format(fps_file))
