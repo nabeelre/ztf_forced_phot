@@ -63,23 +63,43 @@ def read_ipac_fps(fps_file):
                                 'procstatus'])
 
     elif int(ipac_version) >= 3:
-        fp = pd.read_csv(fps_file,
-                         delim_whitespace=True, comment='#', header=0,
-                         names=['sindex', 'field', 'ccdid', 'qid', 'filter',
-                                'pid', 'infobitssci', 'sciinpseeing',
-                                'scibckgnd', 'scisigpix', 'zpmaginpsci',
-                                'zpmaginpsciunc', 'zpmaginpscirms',
-                                'clrcoeff', 'clrcoeffunc', 'ncalmatches',
-                                'exptime', 'adpctdif1', 'adpctdif2',
-                                'diffmaglim', 'zpdiff', 'programid', 'jd',
-                                'rfid', 'forcediffimflux',
-                                'forcediffimfluxunc', 'forcediffimsnr',
-                                'forcediffimchisq', 'forcediffimfluxap',
-                                'forcediffimfluxuncap', 'forcediffimsnrap',
-                                'aperturecorr', 'dnearestrefsrc',
-                                'nearestrefmag', 'nearestrefmagunc',
-                                'nearestrefchi', 'nearestrefsharp',
-                                'refjdstart', 'refjdend', 'procstatus'])
+        if ipac_version == '6':
+            # Recent versions of fps output include a "diffimgstatus" column
+            fp = pd.read_csv(fps_file,
+                             sep=r'\s+', comment='#', header=0,
+                             names=["sindex", "field", "ccdid", "qid", "filter",
+                                    "pid", "infobitssci", "sciinpseeing",
+                                    "scibckgnd", "scisigpix", "zpmaginpsci",
+                                    "zpmaginpsciunc", "zpmaginpscirms",
+                                    "clrcoeff", "clrcoeffunc", "ncalmatches",
+                                    "exptime", "adpctdif1", "adpctdif2",
+                                    "diffmaglim", "zpdiff", "programid", "jd",
+                                    "rfid", "diffimgstatus", "forcediffimflux",
+                                    "forcediffimfluxunc", "forcediffimsnr",
+                                    "forcediffimchisq", "forcediffimfluxap",
+                                    "forcediffimfluxuncap", "forcediffimsnrap",
+                                    "aperturecorr", "dnearestrefsrc", "nearestrefmag",
+                                    "nearestrefmagunc", "nearestrefchi",
+                                    "nearestrefsharp", "refjdstart", "refjdend",
+                                    "procstatus"])
+        else:
+            fp = pd.read_csv(fps_file,
+                            sep=r'\s+', comment='#', header=0,
+                            names=['sindex', 'field', 'ccdid', 'qid', 'filter',
+                                    'pid', 'infobitssci', 'sciinpseeing',
+                                    'scibckgnd', 'scisigpix', 'zpmaginpsci',
+                                    'zpmaginpsciunc', 'zpmaginpscirms',
+                                    'clrcoeff', 'clrcoeffunc', 'ncalmatches',
+                                    'exptime', 'adpctdif1', 'adpctdif2',
+                                    'diffmaglim', 'zpdiff', 'programid', 'jd',
+                                    'rfid', 'forcediffimflux',
+                                    'forcediffimfluxunc', 'forcediffimsnr',
+                                    'forcediffimchisq', 'forcediffimfluxap',
+                                    'forcediffimfluxuncap', 'forcediffimsnrap',
+                                    'aperturecorr', 'dnearestrefsrc',
+                                    'nearestrefmag', 'nearestrefmagunc',
+                                    'nearestrefchi', 'nearestrefsharp',
+                                    'refjdstart', 'refjdend', 'procstatus'])
 
         palomar = EarthLocation.of_site('Palomar')
         ha = pd.read_csv(fps_file, skiprows=3, nrows=2,
