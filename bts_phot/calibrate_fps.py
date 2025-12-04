@@ -1,6 +1,7 @@
 import gc, pkg_resources
 import numpy as np
 import pandas as pd
+import re
 
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import Figure
@@ -268,9 +269,19 @@ def get_baseline(fps_file, window="14D",
     bad_obs_fl = 512
 
     if isinstance(fps_file, str):
-        if save_fig is True or write_lc is not False or make_plot is True:
-            ztf_name = 'ZTF' + fps_file.split('ZTF')[-1][0:9]
-            print(ztf_name)
+        if save_fig or write_lc or make_plot:
+            if "ZTF" in fps_file:
+                # If "ZTF" is in the file name, assume the following 9 characters
+                # are the two-digit year and the seven-letter ZTF ID
+                ztf_name = 'ZTF' + fps_file.split('ZTF')[-1][0:9]
+                print("ZTF name: {}".format(ztf_name))
+            elif "reqid" in fps_file:
+                # Batch FP output files are identified with their request ID integers
+                # This extracts the request ID integer from the file name if it contains "reqid"
+                ztf_name = re.search(r'/(\d+)\.txt$', fps_file).group(1)
+                print("Request ID: {}".format(ztf_name))
+            else:
+                raise AssertionError("Unable to decode object name from file path: {}".format(fps_file))
         fp_df = read_ipac_fps(fps_file)
         if save_path == 'default':
             save_path = fps_file[0:-len(fps_file.split('/')[-1])]
