@@ -41,7 +41,7 @@ def read_ipac_fps(fps_file):
     ipac_version = pd.read_csv(fps_file, skiprows=1, nrows=1).columns[1][2]
     if ipac_version == '2':
         fp = pd.read_csv(fps_file,
-                         delim_whitespace=True, comment='#', skiprows=70,
+                         sep=r'\s+', comment='#', skiprows=70,
                          names=['ipac_index', 'field', 'ccdid', 'qid',
                                 'filter', 'pid', 'infobitssci', 'airmass',
                                 'moonalt', 'moonillf', 'moonra', 'moondec',
@@ -61,7 +61,6 @@ def read_ipac_fps(fps_file):
                                 'nearestrefmag', 'nearestrefmagunc',
                                 'nearestrefchi', 'nearestrefsharp',
                                 'procstatus'])
-
     elif int(ipac_version) >= 3:
         if ipac_version == '6':
             # Recent versions of fps output include a "diffimgstatus" column
@@ -102,8 +101,7 @@ def read_ipac_fps(fps_file):
                                     'refjdstart', 'refjdend', 'procstatus'])
 
         palomar = EarthLocation.of_site('Palomar')
-        ha = pd.read_csv(fps_file, skiprows=3, nrows=2,
-                         delim_whitespace=True,
+        ha = pd.read_csv(fps_file, skiprows=3, nrows=2, sep=r'\s+',
                          names=['dum', 'dum1', 'dum2', 'coords', 'dum4'])
         ra, dec = ha.coords.values
         targ = SkyCoord(ra*u.deg, dec*u.deg)
@@ -111,7 +109,6 @@ def read_ipac_fps(fps_file):
         targaltaz = targ.transform_to(AltAz(obstime=time, location=palomar))
         airmass = targaltaz.secz.value
         fp['airmass'] = airmass
-
 
     union_list = ['field', 'ccdid', 'qid', 'filter',
                   'pid', 'infobitssci', 'airmass',
@@ -130,7 +127,7 @@ def read_ipac_fps(fps_file):
 
     cloudy = np.zeros_like(fp_det.infobitssci.values)
     read_opts = {
-        'delim_whitespace': True,
+        'sep': r'\s+',
         'names': ['zp_rcid_g', 'zp_rcid_r', 'zp_rcid_i'],
         'comment': '#'
     }
